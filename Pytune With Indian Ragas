@@ -6,15 +6,11 @@ flat_notes = ['C', 'Db', 'D', 'Eb', 'E', 'F',
 
 major_steps = [2, 2, 1, 2, 2, 2, 1]
 minor_steps = [2, 1, 2, 2, 1, 2, 2]
-
-# Indian Raga additions
 mohanam_steps = [2, 2, 3, 2, 3]  # S R2 G3 P D2
 hamsadhwani_steps = [2, 2, 3, 4]  # S R2 G3 P N3
 
 major_chords = ['major', 'minor', 'minor', 'major', 'major', 'minor', 'diminished']
 minor_chords = ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'major']
-
-# Raga chord qualities (pentatonic scales- 5 chords) (scale having only five notes)
 mohanam_chords = ['major', 'minor', 'minor', 'major', 'major']
 hamsadhwani_chords = ['major', 'minor', 'minor', 'major', 'major']
 
