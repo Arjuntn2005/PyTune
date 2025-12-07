@@ -1,261 +1,615 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PyTune - Scale & Chord Generator</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyTune - Raga & Chord Generator</title>
+    <!-- Indian-style Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Sahitya:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { 
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        color: #333;
-      }
-      .container {
-        flex: 1;
-        max-width: 600px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 40px 20px;
-      }
-      .card {
-        background: white;
-        border-radius: 16px;
-        padding: 32px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      }
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 8px;
-        color: #667eea;
-        text-align: center;
-      }
-      .subtitle {
-        text-align: center;
-        color: #666;
-        margin-bottom: 32px;
-        font-size: 0.9rem;
-      }
-      label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: #555;
-        font-size: 0.9rem;
-      }
-      .input-group {
-        margin-bottom: 20px;
-      }
-      input, select {
-        width: 100%;
-        padding: 12px 16px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: border-color 0.2s;
-      }
-      input:focus, select:focus {
-        outline: none;
-        border-color: #667eea;
-      }
-      select {
-        cursor: pointer;
-        background: white;
-      }
-      button {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        margin-top: 8px;
-      }
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-      }
-      button:active {
-        transform: translateY(0);
-      }
-      .output-section {
-        margin-top: 32px;
-        padding-top: 32px;
-        border-top: 2px solid #f0f0f0;
-      }
-      .output-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: #667eea;
-      }
-      .output {
-        background: #f8f9fa;
-        border-left: 4px solid #667eea;
-        padding: 16px;
-        border-radius: 8px;
-        white-space: pre-wrap;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: #333;
-        min-height: 60px;
-      }
-      .error {
-        border-left-color: #e74c3c;
-        background: #fee;
-        color: #c0392b;
-      }
-      footer {
-        text-align: center;
-        padding: 20px;
-        color: white;
-        font-size: 0.9rem;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      }
-      footer a {
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-      }
-      .scales-info {
-        background: #f0f4ff;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 0.85rem;
-        color: #555;
-      }
-      .scales-info strong {
-        color: #667eea;
-      }
+        :root {
+            --wood-dark: #3E2723;
+            --wood-light: #5D4037;
+            --wood-varnish: #2c1608;
+            --saffron: #FF6F00;
+            --gold: #FFD54F;
+            --ivory: #FFF8E1;
+            --brass: #bcaaa4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sahitya', serif;
+            background-color: var(--wood-varnish);
+            background-image: 
+                radial-gradient(circle at 50% 0%, #5D4037 0%, #2c1608 80%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--ivory);
+            overflow-x: hidden;
+        }
+
+        /* Decorative top border */
+        .inlay-border {
+            height: 8px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--gold),
+                var(--gold) 10px,
+                var(--wood-dark) 10px,
+                var(--wood-dark) 20px
+            );
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .instrument-body {
+            background: linear-gradient(135deg, #4E342E 0%, #3E2723 100%);
+            border-radius: 24px 24px 40px 40px; /* Curves like a Sitar */
+            padding: 40px;
+            width: 100%;
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.8), /* Depth */
+                0 20px 50px rgba(0,0,0,0.6), /* Drop shadow */
+                0 0 0 4px var(--wood-dark), /* Outer rim */
+                0 0 0 6px var(--gold); /* Gold inlay */
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        /* Decorative sound hole graphic */
+        .instrument-body::before {
+            content: 'ॐ';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            opacity: 0.1;
+            color: var(--gold);
+            font-family: 'Rozha One', serif;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Rozha One', serif;
+            font-size: 3rem;
+            text-align: center;
+            color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #d7ccc8;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            font-style: italic;
+            border-bottom: 1px solid rgba(255,213,79,0.3);
+            padding-bottom: 10px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .scales-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--brass);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #d7ccc8;
+            text-align: center;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .controls-grid { grid-template-columns: 1fr; }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 248, 225, 0.05);
+            border: none;
+            border-bottom: 2px solid var(--brass);
+            color: var(--ivory);
+            font-family: 'Sahitya', serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border-radius: 4px 4px 0 0;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 248, 225, 0.1);
+            border-bottom-color: var(--saffron);
+        }
+
+        select option {
+            background: var(--wood-dark);
+            color: var(--ivory);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--saffron) 0%, #e65100 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Rozha One', serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 111, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 111, 0, 0.6);
+            background: linear-gradient(135deg, #ffa000 0%, #ff6f00 100%);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.playing {
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            box-shadow: 0 0 15px #43a047;
+        }
+
+        /* Output Section */
+        .output-section {
+            margin-top: 30px;
+            background: var(--ivory);
+            padding: 20px;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            border: 8px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h30v30H0z' fill='%235D4037'/%3E%3Cpath d='M2 2h26v26H2z' fill='%23FFF8E1'/%3E%3C/svg%3E") 8 round;
+        }
+
+        .output-title {
+            color: var(--wood-dark);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-family: 'Rozha One', serif;
+            border-bottom: 1px solid var(--wood-light);
+            padding-bottom: 5px;
+        }
+
+        .output {
+            font-family: 'Courier New', monospace;
+            color: #3e2723;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+        
+        .error { color: #c62828; }
+
+        /* Keyboard Visualizer */
+        .keyboard-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            background: #222;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border-top: 4px solid var(--wood-light);
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .key {
+            width: 40px;
+            height: 120px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 0 0 4px 4px;
+            margin: 0 2px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10px;
+            font-size: 0.7rem;
+            color: #333;
+            font-weight: bold;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+
+        .key.black {
+            width: 28px;
+            height: 80px;
+            background: linear-gradient(to bottom, #333, #000);
+            color: white;
+            margin-left: -16px;
+            margin-right: -16px;
+            z-index: 2;
+            border-radius: 0 0 3px 3px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            border: none;
+        }
+
+        .key.active {
+            background: var(--saffron) !important;
+            color: white !important;
+            box-shadow: 0 0 15px var(--saffron);
+            transform: translateY(2px);
+        }
+        
+        /* Audio visualizer bar (simple pulse) */
+        .audio-indicator {
+            height: 4px;
+            width: 0%;
+            background: var(--saffron);
+            margin: 0 auto;
+            transition: width 0.2s;
+            border-radius: 2px;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--brass);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        footer a { color: var(--gold); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
     </style>
-  </head>
-  <body>
+</head>
+<body>
+    <div class="inlay-border"></div>
     <div class="container">
-      <div class="card">
-        <h1>🎵 PyTune</h1>
-        <p class="subtitle">Musical Scale & Chord Generator</p>
+        <div class="instrument-body">
+            <h1>♫ PyTune</h1>
+            <p class="subtitle">Discover the Swaras & Chords</p>
 
-        <div class="scales-info" id="scalesInfo">
-          <strong>Available scales:</strong> Loading...
+            <div class="scales-info" id="scalesInfo">
+                <strong>Available ragas/scales:</strong> Loading...
+            </div>
+
+            <div class="controls-grid">
+                <div>
+                    <label for="key">Musical Key (Shruti)</label>
+                    <input id="key" type="text" placeholder="e.g., C, D#, Bb" value="C" />
+                </div>
+
+                <div>
+                    <label for="scale">Scale Type (Thaat/Raga)</label>
+                    <select id="scale">
+                        <option value="major">Major (Bilawal)</option>
+                        <option value="minor">Minor (Asavari)</option>
+                        <option value="mohanam">Mohanam (Bhoopali)</option>
+                        <option value="hamsadhwani">Hamsadhwani</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="audio-indicator" id="audioPulse"></div>
+            <button id="generate">Resonate & Play</button>
+
+            <!-- Keyboard Visualizer -->
+            <div class="keyboard-container" id="keyboard">
+                <!-- Keys generated by JS -->
+            </div>
+
+            <div class="output-section">
+                <div class="output-title">Composition</div>
+                <div id="output" class="output">Select a Key and Scale to begin...</div>
+            </div>
         </div>
-
-        <div class="input-group">
-          <label for="key">Musical Key</label>
-          <input id="key" type="text" placeholder="e.g., C, D#, Bb" value="C" />
-        </div>
-
-        <div class="input-group">
-          <label for="scale">Scale Type</label>
-          <select id="scale">
-            <option value="major">Major</option>
-            <option value="minor">Minor</option>
-            <option value="mohanam">Mohanam (Indian Raga)</option>
-            <option value="hamsadhwani">Hamsadhwani (Indian Raga)</option>
-          </select>
-        </div>
-
-        <button id="generate">Generate Scale</button>
-
-        <div class="output-section">
-          <div class="output-title">Result</div>
-          <div id="output" class="output">Click "Generate Scale" to see the notes and chords...</div>
-        </div>
-      </div>
     </div>
 
     <footer>
-      Made with ❤️ by <a href="https://github.com/Arjuntn2005" target="_blank">Arjun TN</a>
+        <a href="https://github.com/Arjuntn2005" target="_blank">Crafted with ❤️ by Arjun TN</a>
     </footer>
 
     <script>
-      const keyInput = document.getElementById('key');
-      const scaleSelect = document.getElementById('scale');
-      const generateBtn = document.getElementById('generate');
-      const output = document.getElementById('output');
-      const scalesInfo = document.getElementById('scalesInfo');
-      const API_BASE = (() => {
-        const { protocol, hostname, port } = window.location;
-        if (protocol === 'file:') {
-          return 'http://127.0.0.1:8000';
-        }
-        if ((hostname === 'localhost' || hostname === '127.0.0.1') && port && port !== '8000') {
-          return `${protocol}//${hostname}:8000`;
-        }
-        return '';
-      })();
+        const keyInput = document.getElementById('key');
+        const scaleSelect = document.getElementById('scale');
+        const generateBtn = document.getElementById('generate');
+        const output = document.getElementById('output');
+        const scalesInfo = document.getElementById('scalesInfo');
+        const keyboard = document.getElementById('keyboard');
+        const audioPulse = document.getElementById('audioPulse');
+        const API_BASE = 'https://pytune.onrender.com';
 
-      async function loadScales() {
-        try {
-          const res = await fetch(`${API_BASE}/api/scales`);
-          if (!res.ok) {
-            throw new Error(`Request failed with status ${res.status}`);
-          }
-          const contentType = res.headers.get('content-type') || '';
-          if (!contentType.includes('application/json')) {
-            throw new Error('Unexpected response format');
-          }
-          const data = await res.json();
-          if (data.scales) {
-            scalesInfo.innerHTML = `<strong>Available scales:</strong> ${data.scales.join(', ')}`;
-          }
-        } catch (e) {
-          console.error('Failed to load scales:', e);
-          scalesInfo.innerHTML = '<strong>Available scales:</strong> Unable to load scales. Please try again.';
-        }
-      }
-
-      async function generateScale() {
-        const key = keyInput.value.trim();
-        const scale = scaleSelect.value;
+        // --- AUDIO ENGINE ---
+        let audioCtx;
         
-        if (!key) {
-          output.className = 'output error';
-          output.textContent = 'Please enter a musical key (e.g., C, D#, Bb)';
-          return;
+        // Note frequencies (Octave 4)
+        const NOTE_FREQS = {
+            'C': 261.63, 'C#': 277.18, 
+            'D': 293.66, 'D#': 311.13, 
+            'E': 329.63,
+            'F': 349.23, 'F#': 369.99, 
+            'G': 392.00, 'G#': 415.30, 
+            'A': 440.00, 'A#': 466.16, 
+            'B': 493.88
+        };
+
+        const NOTE_ORDER = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
         }
 
-        output.className = 'output';
-        output.textContent = 'Generating...';
+        // Helper to handle flats vs sharps (Db -> C#)
+        function normalizeNote(note) {
+            if (!note) return '';
+            const map = {'Db':'C#', 'Eb':'D#', 'Gb':'F#', 'Ab':'G#', 'Bb':'A#'};
+            return map[note] || note;
+        }
 
-        try {
-          const res = await fetch(`${API_BASE}/api/generate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key, scale_type: scale })
-          });
-          const contentType = res.headers.get('content-type') || '';
-          if (!contentType.includes('application/json')) {
-            throw new Error('Unexpected response format');
-          }
-          const data = await res.json();
-          if (res.ok && data.success) {
+        // Plays a "Plucked" Sitar/Veena sound
+        function playTone(freq, duration, startTime) {
+            if (!audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filterNode = audioCtx.createBiquadFilter();
+
+            osc.type = 'sawtooth'; // Base string sound
+            
+            // Filter Envelope: "Twang" sound
+            filterNode.type = 'lowpass';
+            filterNode.Q.value = 5; 
+            filterNode.frequency.setValueAtTime(2000, startTime);
+            filterNode.frequency.exponentialRampToValueAtTime(200, startTime + duration * 0.5);
+
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // Amplitude Envelope
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.4, startTime + 0.02); // Pluck
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Fade out
+
+            osc.frequency.value = freq;
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        async function playSequence(noteNames) {
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            let timeOffset = 0;
+            const noteDuration = 0.5; // seconds per note
+            
+            let currentOctave = 4;
+            let lastNoteIndex = -1;
+
+            generateBtn.classList.add('playing');
+            audioPulse.style.width = '100%';
+
+            noteNames.forEach((noteName, i) => {
+                // Normalize note name for lookup
+                const normNote = normalizeNote(noteName);
+                
+                // Determine octave relative to C4
+                let baseFreq = NOTE_FREQS[normNote];
+                
+                // Logic to handle ascending scales properly
+                let noteIndex = NOTE_ORDER.indexOf(normNote);
+
+                // If note index drops (e.g., B to C), we went up an octave
+                if (noteIndex !== -1) {
+                    if (lastNoteIndex !== -1 && noteIndex < lastNoteIndex) {
+                        currentOctave++;
+                    }
+                    lastNoteIndex = noteIndex;
+
+                    if (baseFreq) {
+                        let freq = baseFreq * Math.pow(2, currentOctave - 4);
+                        playTone(freq, noteDuration, now + timeOffset);
+                        
+                        // Visual Sync
+                        setTimeout(() => {
+                            highlightKey(normNote);
+                        }, timeOffset * 1000);
+                    }
+                }
+                
+                timeOffset += noteDuration;
+            });
+
+            // Cleanup visual state
+            setTimeout(() => {
+                generateBtn.classList.remove('playing');
+                audioPulse.style.width = '0%';
+                clearHighlights();
+            }, timeOffset * 1000);
+        }
+
+        // --- KEYBOARD UI ---
+        function createKeyboard() {
+            keyboard.innerHTML = '';
+            const displayNotes = [...NOTE_ORDER, ...NOTE_ORDER]; 
+            
+            displayNotes.forEach((note, index) => {
+                const keyDiv = document.createElement('div');
+                const isBlack = note.includes('#');
+                keyDiv.className = `key ${isBlack ? 'black' : 'white'}`;
+                keyDiv.dataset.note = note;
+                
+                keyDiv.addEventListener('mousedown', () => {
+                    initAudio();
+                    if(audioCtx.state === 'suspended') audioCtx.resume();
+                    
+                    let octave = index < 12 ? 4 : 5;
+                    let freq = NOTE_FREQS[note] * Math.pow(2, octave - 4);
+                    playTone(freq, 0.5, audioCtx.currentTime);
+                    
+                    keyDiv.classList.add('active');
+                    setTimeout(() => keyDiv.classList.remove('active'), 300);
+                });
+
+                if (!isBlack) {
+                    const span = document.createElement('span');
+                    span.textContent = note;
+                    keyDiv.appendChild(span);
+                }
+                keyboard.appendChild(keyDiv);
+            });
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+        }
+
+        function highlightKey(note) {
+            const normNote = normalizeNote(note);
+            const keys = document.querySelectorAll(`.key`);
+            keys.forEach(k => {
+                if(k.dataset.note === normNote) {
+                    k.classList.add('active');
+                    setTimeout(() => k.classList.remove('active'), 400); 
+                }
+            });
+        }
+
+        // --- API & APP LOGIC ---
+        async function loadScales() {
+            try {
+                const res = await fetch(`${API_BASE}/api/scales`);
+                if (!res.ok) throw new Error(`Status ${res.status}`);
+                const data = await res.json();
+                if (data.scales) {
+                    scalesInfo.innerHTML = `<strong>Available ragas:</strong> ${data.scales.join(', ')}`;
+                }
+            } catch (e) {
+                console.error('Failed:', e);
+                scalesInfo.innerHTML = '<strong>System:</strong> Connecting to Musical Archives...';
+            }
+        }
+
+        async function generateScale() {
+            // CRITICAL: Initialize Audio Context immediately on user click
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
+
+            const key = keyInput.value.trim();
+            const scale = scaleSelect.value;
+            
+            if (!key) {
+                output.className = 'output error';
+                output.textContent = 'Please enter a Key (Sa).';
+                return;
+            }
+
             output.className = 'output';
-            output.textContent = data.data.text;
-          } else {
-            output.className = 'output error';
-            output.textContent = `Error: ${data.error || 'Unable to generate scale.'}`;
-          }
-        } catch (err) {
-          output.className = 'output error';
-          output.textContent = `Network error: ${err.message}`;
+            output.textContent = 'Tuning strings...';
+            generateBtn.textContent = 'Resonating...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key, scale_type: scale })
+                });
+                const data = await res.json();
+                
+                generateBtn.textContent = 'Resonate & Play';
+                
+                if (res.ok && data.success) {
+                    output.className = 'output';
+                    output.textContent = data.data.text;
+                    
+                    // Parse result safely handling Unicode arrows (→) and ASCII arrows (->)
+                    const lines = data.data.text.split('\n');
+                    
+                    // Regex to find line with arrows
+                    const arrowRegex = /->|→/;
+                    let noteLine = lines.find(l => arrowRegex.test(l));
+                    
+                    if (noteLine) {
+                        // Remove "end" marker and surrounding arrows/spaces
+                        // Works for "C → D → end" or "C -> D -> end"
+                        let content = noteLine.replace(/(?:->|→)\s*end\s*$/i, '');
+                        
+                        // Split by arrow
+                        let noteArray = content.split(/(?:->|→)/)
+                            .map(s => s.trim())
+                            .filter(s => s && s.toLowerCase() !== 'end');
+                        
+                        // Play the audio sequence
+                        playSequence(noteArray);
+                    }
+                } else {
+                    output.className = 'output error';
+                    output.textContent = `Error: ${data.error || 'Disharmony detected.'}`;
+                }
+            } catch (err) {
+                generateBtn.textContent = 'Resonate & Play';
+                output.className = 'output error';
+                output.textContent = `Connection lost: ${err.message}`;
+            }
         }
-      }
 
-      generateBtn.addEventListener('click', generateScale);
-      keyInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') generateScale();
-      });
+        generateBtn.addEventListener('click', generateScale);
+        keyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateScale();
+        });
 
-      loadScales();
+        // Initialize
+        createKeyboard();
+        loadScales();
     </script>
-  </body>
+</body>
 </html>
