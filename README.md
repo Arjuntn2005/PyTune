@@ -4,6 +4,7 @@ PyTune is a Python-based tool that generates musical scales and diatonic chords 
 
 🧠 Features
 - Supports both **major** and **minor** scales
+- Supports Indian Scales like **Mohanam** and **Hamsadhwani**
 - Automatically selects **sharp or flat** notation
 - Prints **scale notes** and their **diatonic chords**
 - Lightweight and easy to use
