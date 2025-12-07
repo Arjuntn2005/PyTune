@@ -15,7 +15,7 @@ scale_configs = {
         'chords': ['major', 'minor', 'minor', 'major', 'major']
     },
     'hamsadhwani': {
-        'steps': [2, 2, 3, 4],
+        'steps': [2, 2, 3, 4,1],
         'chords': ['major', 'minor', 'minor', 'major']
     }
 }
