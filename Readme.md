@@ -9,5 +9,5 @@ PyTune is a Python-based tool that generates musical scales and diatonic chords 
 - Prints **scale notes** and their **diatonic chords**
 - Lightweight and easy to use
 
-
+# Link 🥇https://pytune.tiiny.site/
 # Made By Thulasi
