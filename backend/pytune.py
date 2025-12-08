@@ -16,7 +16,7 @@ scale_configs = {
     },
     'hamsadhwani': {
         'steps': [2, 2, 3, 4, 1],
-        'chords': ['major', 'minor', 'minor', 'major']
+        'chords': ['major', 'minor', 'minor', 'major', 'major']
     }
 }
 
@@ -48,7 +48,7 @@ def generate_scale(key: str, scale_type: str):
         scale.append(notes[index])
     
     scale = scale[:-1]
-    diatonic = [f"{scale[i]} {chords[i]}" for i in range(len(scale))]
+    diatonic = [f"{note} {chord}" for note, chord in zip(scale, chords)]
     notes_line = " → ".join(scale) + " → end"
     text = f"\nNotes in the scale:\n{notes_line}\n\nDiatonic chords in the scale:\n" + "\n".join(diatonic)
     
