@@ -11,9 +11,6 @@ minor_chords = ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'majo
 mohanam_chords = ['major', 'minor', 'minor', 'major', 'major']
 hamsadhwani_chords = ['major', 'minor', 'minor', 'major', 'major']
 
-key = input("Enter the key (e.g., C, D#, Bb): ").strip().upper()
-scale_type = input("Enter the scale (major / minor / mohanam / hamsadhwani): ").strip().lower()
-
 notes = flat_notes if key[-1] == 'b' else sharp_notes
 
 if key not in notes:
