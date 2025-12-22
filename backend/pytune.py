@@ -1,23 +1,20 @@
-sharp_notes = ['C', 'C#', 'D', 'D#', 'E', 'F',
-               'F#', 'G', 'G#', 'A', 'A#', 'B']
-
-flat_notes = ['C', 'Db', 'D', 'Eb', 'E', 'F',
-              'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+sharp_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+flat_notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
 
 major_steps = [2, 2, 1, 2, 2, 2, 1]
 minor_steps = [2, 1, 2, 2, 1, 2, 2]
 mohanam_steps = [2, 2, 3, 2, 3]        # S R2 G3 P D2
-hamsadhwani_steps = [2, 2, 3, 4]       # S R2 G3 P N3
+hamsadhwani_steps = [2, 2, 3, 4]        # S R2 G3 P N3
 
 major_chords = ['major', 'minor', 'minor', 'major', 'major', 'minor', 'diminished']
 minor_chords = ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'major']
 mohanam_chords = ['major', 'minor', 'minor', 'major', 'major']
 hamsadhwani_chords = ['major', 'minor', 'minor', 'major', 'major']
 
-key = input("Enter the key (e.g., C, D#, Bb): ").strip()
+key = input("Enter the key (e.g., C, D#, Bb): ").strip().upper()
 scale_type = input("Enter the scale (major / minor / mohanam / hamsadhwani): ").strip().lower()
 
-notes = flat_notes if 'b' in key else sharp_notes
+notes = flat_notes if key[-1] == 'b' else sharp_notes
 
 if key not in notes:
     print("Invalid key entered.")
@@ -41,9 +38,9 @@ else:
     print("Invalid scale type.")
     exit()
 
+# Build scale
 scale = [notes[start]]
 index = start
-
 for step in steps:
     index = (index + step) % 12
     scale.append(notes[index])
@@ -55,5 +52,5 @@ print("\nNotes in the scale:")
 print(" → ".join(scale), "→ end")
 
 print("\nDiatonic chords in the scale:")
-for note, chord in zip(scale, chords):
-    print(f"{note} {chord}")
+for i, (note, chord) in enumerate(zip(scale, chords), 1):
+    print(f"{i}. {note} {chord}")
